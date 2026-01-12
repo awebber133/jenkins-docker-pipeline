@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "alexis441/jenkins-demo"
+        IMAGE_NAME = "awebber133/jenkins-demo"
     }
 
     stages {
@@ -12,16 +12,17 @@ pipeline {
             }
         }
 
-        stage('Test') {
-            steps {
-                sh 'python3 -m pip install -r requirements.txt'
-                sh 'python3 -m pytest'
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 sh 'docker build -t $IMAGE_NAME:latest .'
+            }
+        }
+
+        stage('Test Inside Docker') {
+            steps {
+                sh '''
+                docker run --rm $IMAGE_NAME:latest pytest
+                '''
             }
         }
 
